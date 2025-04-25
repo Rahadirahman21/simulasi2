@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <h1>username</h1>
+    <input type="text" name="" id="username" />
+    <h1>password</h1>
+    <input type="password" name="" id="password" />
+    <button onclick="login()">login</button>
+    <script>
+      const supabaseUrl = " https://fdjzbopzjiklhwpdtojs.supabase.co";
+      const supabaseKey =
+        " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkanpib3B6amlrbGh3cGR0b2pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDI2NzEsImV4cCI6MjA2MTExODY3MX0.yyftchgsL3J1c7gXSMeDslKHplVyc-vkd_U7AwzfXRQ";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const { data, error } = await supabase.from("tbl_user").select("*").eq('username',username).eq('password',password).single()
+        if(data.tipe_user == 'admin'){
+            window.location.href = "admin.html";
+            
+        }else if(data.tipe_user == 'gudang'){
+            window.location.href = "gudang.html";
+            
+        }else if(data.tipe_user == 'kasir'){
+            window.location.href = "kasir.html";
+            
+        }
+
+      }
+    </script>
+  </body>
+</html>

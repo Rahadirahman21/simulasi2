@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <div class="navbar bg-base-100 shadow-sm">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow h-screen bg-blue-500"
+          >
+            <li><a>Homepage</a></li>
+            <li><a>Portfolio</a></li>
+            <li><a>About</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-center">
+        <h1>Admin</h1>
+      </div>
+      <div class="navbar-end">
+        <a href="">asjgdjagdhj</a>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+  <table class="table">
+      <tr>
+        <td>Kode Barang </td>
+        <td>Jumlah Barang</td>
+        <td>Nama Barang</td>
+        <td>Satuan</td>
+        <td>Expired Data</td>
+        <td>Harga Satuan</td>
+        </tr>
+        <td>
+           <input type="text" id="kode_barang" class="input">
+        </td>
+        
+        <td><input type="text" class="input" id="jumlah_barang"></td>
+        <td><input type="text" class="input" id="nama_barang"></td>
+        <td><input type="text" class="input" id="satuan"></td>
+        <td><input type="date" class="input" id="expired_date"></td>
+        <td><input type="text" class="input" id="harga_satuan"></td>
+    </tr>
+    <tr>
+        <td><button class="btn " onclick="addUser()">Tambah</button></td>
+        <td><button class="btn " onclick="updateUser()">Update</button></td>
+        <input type="hidden" id="userId">              
+    </tr>
+  </table>
+</div>
+    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+  <table class="table" id="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Job</th>
+        <th>Favorite Color</th>
+      </tr>
+    </thead>
+    <tbody>
+     
+    </tbody>
+  </table>
+</div>
+
+    <script>
+        const supabaseUrl = " https://fdjzbopzjiklhwpdtojs.supabase.co";
+      const supabaseKey =
+        " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkanpib3B6amlrbGh3cGR0b2pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDI2NzEsImV4cCI6MjA2MTExODY3MX0.yyftchgsL3J1c7gXSMeDslKHplVyc-vkd_U7AwzfXRQ";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      const kode_barang = document.getElementById("kode_barang").value
+      const jumlah_barang = document.getElementById("jumlah_barang").value
+      const nama_barang = document.getElementById("nama_barang").value
+      const satuan = document.getElementById("satuan").value
+      const expired_date = document.getElementById("expired_date").value
+      const harga_satuan = document.getElementById("harga_satuan").value
+      
+      async function loadUser() {
+        const {data, error} = await supabase.from("tbl_barang").select("*")
+        const table = document.getElementById("table")
+        table.innerHTML = `
+        <tr>
+        <th>ID barang</th>
+        <th>Kode Barang</th>
+        <th>Nama Barang</th>
+        <th>Expired Date</th>
+        <th>Qty</th>
+        <th>Satuan</th>
+        <th>Harga Satuan</th>
+        <th>Aksi</th>
+      </tr>
+        `
+        data.forEach((user , index) => {
+            const row = document.createElement('tr')
+            row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${user.kode_barang}</td>
+            <td>${user.nama_barang}</td>
+            <td>${user.expired_date}</td>
+            <td>${user.jumlah_barang}</td>
+            <td>${user.satuan}</td>
+            <td>${user.harga_satuan}</td>
+            <button type="button" class="btn " onclick='editUser(${JSON.stringify(user)})'>Edit</button>
+            <button type="button" class="btn " onclick='deleteUser(${user.id_barang})'>Hapus</button>
+            `
+            
+            table.appendChild(row)
+        });
+      }
+    //   const hiddenIdInput = document.createElement("input")
+    //   hiddenIdInput.type = "hidden"
+    //   hiddenIdInput.type = "userId"
+    //   document.body.appendChild(hiddenIdInput)
+      loadUser()
+
+      async function reset() {
+          document.getElementById("kode_barang").value = ""
+       document.getElementById("jumlah_barang").value = ""
+       document.getElementById("nama_barang").value = ""
+       document.getElementById("satuan").value = ""
+       document.getElementById("expired_date").value = ""
+       document.getElementById("harga_satuan").value = ""
+        
+      }
+      async function addUser() {
+         const kode_barang = document.getElementById("kode_barang").value
+      const jumlah_barang = document.getElementById("jumlah_barang").value
+      const nama_barang = document.getElementById("nama_barang").value
+      const satuan = document.getElementById("satuan").value
+      const expired_date = document.getElementById("expired_date").value
+      const harga_satuan = document.getElementById("harga_satuan").value
+        const {data , error} = await supabase.from("tbl_barang").insert([{
+            kode_barang: kode_barang,
+            jumlah_barang: jumlah_barang,
+            nama_barang: nama_barang,
+            satuan: satuan,
+            expired_date: expired_date,
+            harga_satuan: harga_satuan,
+        }])
+        loadUser()
+        
+        
+      }
+      async function editUser(user) {
+          document.getElementById("userId").value = user.id_user
+          document.getElementById("tipe_user").value = user.tipe_user
+       document.getElementById("nama").value = user.nama
+       document.getElementById("telepon").value = user.telepon
+       document.getElementById("alamat").value = user.alamat
+       document.getElementById("username").value = user.username
+       document.getElementById("password").value = user.password
+      }
+      async function updateUser() {
+         const id_user = document.getElementById("userId").value
+         const tipe_user = document.getElementById("tipe_user").value
+      const nama = document.getElementById("nama").value
+      const telepon = document.getElementById("telepon").value
+      const alamat = document.getElementById("alamat").value
+      const username = document.getElementById("username").value
+      const password = document.getElementById("password").value
+        const {data , error} = await supabase.from("tbl_user").update([{
+            tipe_user: tipe_user,
+            nama: nama,
+            telepon: telepon,
+            alamat: alamat,
+            username: username,
+            password: password,
+        }]).eq("id_user",id_user)
+        loadUser()
+        reset()
+        
+      }
+      async function deleteUser(userId) {
+        const {data, error} = await supabase.from("tbl_log").delete("*").eq("id_user",userId)
+     await supabase.from("tbl_user").delete("*").eq("id_user",userId)
+        loadUser()
+      }
+    </script>
+  </body>
+</html>
